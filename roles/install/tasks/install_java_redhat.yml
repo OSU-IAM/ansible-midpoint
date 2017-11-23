@@ -1,0 +1,15 @@
+---
+- name: install Java JDK 8
+  yum:
+    name: java-1.8.0-openjdk
+    state: present
+
+- name: install Java Cryptography Extension (JCE) file US_export_policy.jar
+  copy:
+    src: jce-US_export_policy.jar
+    dest: /usr/lib/jvm/jre/lib/security/US_export_policy.jar
+
+- name: install Java Cryptography Extension (JCE) file local_policy.jar
+  copy:
+    src: jce-local_policy.jar
+    dest: /usr/lib/jvm/jre/lib/security/local_policy.jar
