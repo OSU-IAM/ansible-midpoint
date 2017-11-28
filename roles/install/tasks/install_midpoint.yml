@@ -45,3 +45,10 @@
   service:
     name: tomcat
     state: started
+
+- name: wait for midPoint to start
+  local_action: uri url=http://{{ inventory_hostname }}:8080/midpoint return_content=true status_code=200
+  register: midpoint_site
+  until: "'2010-2017' in midpoint_site.content"
+  retries: 10
+  delay: 60

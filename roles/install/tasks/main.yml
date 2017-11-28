@@ -4,3 +4,5 @@
 - import_tasks: install_tomcat_redhat.yml
   when: ansible_os_family == 'RedHat'
 - import_tasks: install_midpoint.yml
+- import_tasks: setup_mariadb.yml
+  when: midpoint.mariadb is defined

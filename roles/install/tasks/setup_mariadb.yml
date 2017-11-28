@@ -1,0 +1,75 @@
+---
+- name: stop tomcat before MariaDB setup
+  service:
+    name: tomcat
+    state: stopped
+
+- name: add MariaDB CentOS repo
+  yum_repository:
+    name: MariaDB
+    description: MariaDB CentOS repository
+    baseurl: http://yum.mariadb.org/10.2/centos7-amd64
+    gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+    gpgcheck: yes
+
+- name: install MariaDB
+  yum:
+    name: [ 'MariaDB-server', 'MariaDB-client' ]
+    state: present
+
+- name: start MariaDB service
+  service:
+    name: mariadb
+    state: started
+
+- name: copy over midPoint config.xml from template
+  template:
+    src: midpoint-config.xml.j2
+    dest: /opt/midpoint/config.xml
+    owner: tomcat
+    group: tomcat
+    mode: 0640
+
+- name: set 'create_db' flag to default value
+  set_fact:
+    create_db: true
+
+- name: check if database already exists
+  command: mysql -e 'use {{ midpoint.mariadb.db_name }}'
+  register: db_check
+  ignore_errors: yes
+
+- name: set 'create_db' flag to false
+  set_fact:
+    create_db: false
+  when: db_check.rc == 0
+
+- name: generate create database script
+  template:
+    src: create_midpoint_db.sql.j2
+    dest: /tmp/create_midpoint_db.sql
+  when: create_db
+
+- name: run create db script
+  shell: mysql -h {{ midpoint.mariadb.db_host }} < /tmp/create_midpoint_db.sql
+  when: create_db
+
+- name: get db setup script
+  get_url:
+    url: "{{ midpoint.mariadb.db_create_script_url }}"
+    dest: /tmp/midpoint_mysql_setup.sql
+  when: create_db
+
+- name: run db setup script
+  shell: mysql -h {{ midpoint.mariadb.db_host }} -u {{ midpoint.mariadb.db_username }} --password={{ midpoint.mariadb.db_password }} -D {{ midpoint.mariadb.db_name }} < /tmp/midpoint_mysql_setup.sql
+  when: create_db
+
+- name: cleanup create db script
+  file:
+    path: /tmp/create_midpoint_db.sql
+    state: absent
+
+- name: start tomcat after db setup
+  service:
+    name: tomcat
+    state: started

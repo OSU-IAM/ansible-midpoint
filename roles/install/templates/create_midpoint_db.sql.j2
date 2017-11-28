@@ -1,0 +1,3 @@
+CREATE DATABASE {{ midpoint.mariadb.db_name }} CHARACTER SET utf8 DEFAULT CHARACTER SET utf8 COLLATE utf8_bin DEFAULT COLLATE utf8_bin;
+CREATE USER '{{ midpoint.mariadb.db_username }}'@'{{ midpoint.mariadb.db_host }}' IDENTIFIED BY '{{ midpoint.mariadb.db_password }}';
+GRANT ALL on {{ midpoint.mariadb.db_name }}.* TO '{{ midpoint.mariadb.db_username }}'@'{{ midpoint.mariadb.db_host }}';
