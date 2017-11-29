@@ -6,3 +6,5 @@
 - import_tasks: install_midpoint.yml
 - import_tasks: setup_mariadb.yml
   when: midpoint.mariadb is defined
+- import_tasks: install_apache_redhat.yml
+  when: midpoint.use_apache_ssl and ansible_os_family == 'RedHat'
