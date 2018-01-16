@@ -1,0 +1,35 @@
+---
+- name: add epel-release yum repo
+  yum:
+    name: epel-release
+    state: present
+
+- name: install packages for apache
+  yum:
+    name: [ 'httpd' ]
+    state: present
+
+- name: open ports in firewalld
+  firewalld:
+    port: "{{ item }}"
+    immediate: true
+    permanent: true
+    state: enabled
+  with_items: [ '80/tcp', '443/tcp' ]
+
+- name: close port 8080 in firewalld
+  firewalld:
+    port: "8080/tcp"
+    immediate: true
+    permanent: true
+    state: disabled
+
+- name: copy over no-ssl.conf from template
+  template:
+    src: standalone/apache-no-ssl.conf.j2
+    dest: /etc/httpd/conf.d/no-ssl.conf
+
+- name: (re)start apache service
+  systemd:
+    name: httpd
+    state: restarted

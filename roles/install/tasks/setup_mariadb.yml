@@ -3,6 +3,13 @@
   service:
     name: tomcat
     state: stopped
+  when: not midpoint.standalone_install
+
+- name: stop midPoint service before MariaDB setup
+  systemd:
+    name: midpoint
+    state: stopped
+  when: midpoint.standalone_install
 
 - name: add MariaDB CentOS repo
   yum_repository:
@@ -22,13 +29,23 @@
     name: mariadb
     state: started
 
-- name: copy over midPoint config.xml from template
+- name: copy over midPoint config.xml from template (warfile)
   template:
     src: midpoint-config.xml.j2
     dest: /opt/midpoint/config.xml
     owner: tomcat
     group: tomcat
     mode: 0640
+  when: not midpoint.standalone_install
+
+- name: copy over midPoint config.xml from template (standalone)
+  template:
+    src: standalone/midpoint-config.xml.j2
+    dest: /opt/midpoint/var/config.xml
+    owner: midpoint
+    group: midpoint
+    mode: 0640
+  when: midpoint.standalone_install
 
 - name: set 'create_db' flag to default value
   set_fact:
@@ -73,3 +90,10 @@
   service:
     name: tomcat
     state: started
+  when: not midpoint.standalone_install
+
+- name: start midPoint service after db setup
+  systemd:
+    name: midpoint
+    state: started
+  when: midpoint.standalone_install
