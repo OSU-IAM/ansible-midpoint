@@ -1,0 +1,162 @@
+---
+- name: create midpoint group
+  group:
+    name: midpoint
+    state: present
+
+- name: create midpoint user
+  user:
+    name: midpoint
+    group: midpoint
+
+- name: install midPoint
+  unarchive:
+    src: http://www.evolveum.com/downloads/midpoint/3.7/midpoint-3.7-dist.tar.gz
+    dest: /opt/
+    remote_src: yes
+    owner: midpoint
+    group: midpoint
+    creates: /opt/midpoint-3.7/bin/start.sh
+
+- name: make midpoint owner of midPoint home
+  file:
+    dest: /opt/midpoint-3.7
+    state: directory
+    owner: midpoint
+    group: midpoint
+    recurse: yes
+
+- name: create /opt/midpoint symlink
+  file:
+    name: /opt/midpoint
+    src: /opt/midpoint-3.7
+    state: link
+
+- name: set 'is_first_run' flag to default value
+  set_fact:
+    is_first_run: true
+
+- name: stat var/ directory in MIDPOINT_HOME
+  stat:
+    path: /opt/midpoint/var
+  register: var
+
+- name: unset 'is_first_run' if var/ exists
+  set_fact:
+    is_first_run: false
+  when: var.stat.isdir is defined and var.stat.isdir
+
+- name: create var/ in MIDPOINT_HOME
+  file:
+    dest: /opt/midpoint/var
+    state: directory
+    owner: midpoint
+    group: midpoint
+  when: is_first_run
+
+- name: configure application for ssl
+  template:
+    src: standalone/application.yml.j2
+    dest: /opt/midpoint/var/application.yml
+    owner: midpoint
+    group: midpoint
+
+- name: set port to default (8080)
+  set_fact:
+    midpoint_port: 8080
+
+- name: set port for ssl (8443)
+  set_fact:
+    midpoint_port: 8443
+  when: midpoint.use_ssl
+
+- name: open port in firewalld
+  firewalld:
+    port: "{{ midpoint_port }}/tcp"
+    immediate: true
+    permanent: true
+    state: enabled
+
+- name: set midPoint url (http)
+  set_fact:
+    midpoint_url: "http://{{ inventory_hostname }}:{{ midpoint_port }}"
+
+- name: set midPoint url (ssl)
+  set_fact:
+    midpoint_url: "https://{{ inventory_hostname }}:{{ midpoint_port }}"
+  when: midpoint.use_ssl
+
+- debug:
+    var: midpoint_url
+
+- name: start midPoint
+  shell: /opt/midpoint/bin/start.sh
+  become: yes
+  become_user: midpoint
+  when: is_first_run
+
+# The following task has been split into http and ssl versions due to a
+# bug in ansible that causes an error when using a variable as the value
+# for the 'port' option:
+#     ValueError: invalid literal for int() with base 10
+# Hopefully, this bug will be fixed so we can use one task and the
+# 'midpoint_port' variable defined above.
+- name: wait for port to come up (http)
+  wait_for:
+    port: 8080
+    delay: 10
+  when: not midpoint.use_ssl
+
+- name: wait for port to come up (ssl)
+  wait_for:
+    port: 8443
+    delay: 10
+  when: midpoint.use_ssl
+
+- name: wait for midPoint to start
+  local_action: uri url={{ midpoint_url }} return_content=true status_code=200
+  register: midpoint_site
+  until: "'2010-2017' in midpoint_site.content"
+  retries: 10
+  when: is_first_run
+
+- name: stop midPoint
+  shell: /opt/midpoint/bin/stop.sh
+  become: yes
+  become_user: midpoint
+  when: is_first_run
+
+- name: create systemd unit file for midPoint
+  copy:
+    src: standalone/midpoint.service
+    dest: /etc/systemd/system/midpoint.service
+
+- name: start midpoint service
+  service:
+    name: midpoint
+    state: started
+
+# The following task has been split into http and ssl versions due to a
+# bug in ansible that causes an error when using a variable as the value
+# for the 'port' option:
+#     ValueError: invalid literal for int() with base 10
+# Hopefully, this bug will be fixed so we can use one task and the
+# 'midpoint_port' variable defined above.
+- name: wait for port to come up (http)
+  wait_for:
+    port: 8080
+    delay: 10
+  when: not midpoint.use_ssl
+
+- name: wait for port to come up (ssl)
+  wait_for:
+    port: 8443
+    delay: 10
+  when: midpoint.use_ssl
+
+- name: wait for midPoint service to start
+  local_action: uri url={{ midpoint_url }} return_content=true status_code=200
+  register: midpoint_site
+  until: "'2010-2017' in midpoint_site.content"
+  retries: 10
+  when: is_first_run

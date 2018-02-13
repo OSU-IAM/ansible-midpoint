@@ -1,0 +1,9 @@
+[Unit]
+Description=MidPoint Standalone Service
+[Service]
+User=midpoint
+WorkingDirectory=/opt/midpoint
+ExecStart=/usr/bin/java -Xmx2048m -Dmidpoint.home=/opt/midpoint/var -jar /opt/midpoint/lib/midpoint.war
+SuccessExitStatus=143
+[Install]
+WantedBy=multi-user.target
