@@ -2,11 +2,11 @@
 
 An ansible playbook for midPoint Identity and Access Management
 
-Starting with midPoint 3.7+, standalone deployment via Spring Boot and embedded Tomcat is now supported. This playbook supports both the standalone and warfile methods of deployment. See the **Configuration** section for details.
+Starting with midPoint 3.7+, standalone deployment via Spring Boot and embedded Tomcat is the preferred method of deployment. The warfile method of deployment is deprecated and will not be supported going forward. See the **Configuration** section for details.
 
 ## Requirements
 
-* Ansible 2.4+
+* Ansible 2.5+
 * The target system must be running RedHat/CentOS
 
 ## Configuration
@@ -19,7 +19,7 @@ midpoint:
   standalone_install: true
   use_ssl: true
   standalone:
-    keystore: changeme
+    keystore: /etc/pki/java/changeme.p12
     keystore_password: changeme
     key_alias: changeme
     truststore: /etc/pki/java/cacerts
@@ -29,7 +29,7 @@ midpoint:
     ssl_intermediate_cert_filename: interm.crt
   mariadb:
     db_create_script_url: https://raw.githubusercontent.com/Evolveum/midpoint/v3.7/config/sql/_all/mysql-3.7-all.sql
-    db_host: localhost
+    db_host: changeme
     db_port: 3306
     db_name: changeme
     db_username: changeme
@@ -73,6 +73,8 @@ my-midpoint-host.someplace.edu
 
 ## Usage
 
+To install midPoint:
+
 ```
-$ ansible-playbook -i inventory/hosts install.yml
+$ ansible-playbook -i inventory/dev install.yml
 ```

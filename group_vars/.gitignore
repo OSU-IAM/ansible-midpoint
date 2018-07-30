@@ -1,0 +1,5 @@
+# ignore the files in this directory
+*
+# ...except these ones
+!.gitignore
+!example-dist

@@ -3,9 +3,9 @@ midpoint:
   standalone_install: true
   use_ssl: true
   standalone:
-    keystore: changeme
+    keystore: /etc/pki/java/splat.p12
     keystore_password: changeme
-    key_alias: changeme
+    key_alias: 1
     truststore: /etc/pki/java/cacerts
   warfile:
     ssl_cert_filename: yourcert.crt
@@ -13,7 +13,7 @@ midpoint:
     ssl_intermediate_cert_filename: interm.crt
   mariadb:
     db_create_script_url: https://raw.githubusercontent.com/Evolveum/midpoint/v3.7/config/sql/_all/mysql-3.7-all.sql
-    db_host: localhost
+    db_host: changeme
     db_port: 3306
     db_name: changeme
     db_username: changeme
