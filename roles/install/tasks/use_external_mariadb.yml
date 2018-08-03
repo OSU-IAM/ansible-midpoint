@@ -1,0 +1,32 @@
+---
+- name: stop midPoint service before MariaDB setup
+  systemd:
+    name: midpoint
+    state: stopped
+
+- name: add MariaDB CentOS repo
+  yum_repository:
+    name: MariaDB
+    description: MariaDB CentOS repository
+    baseurl: http://yum.mariadb.org/10.2/centos7-amd64
+    gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+    gpgcheck: yes
+
+- name: install MariaDB client
+  yum:
+    name: MariaDB-client
+    state: present
+
+- name: copy over midPoint config.xml from template (standalone)
+  template:
+    src: standalone/midpoint-config.xml.j2
+    dest: /opt/midpoint/var/config.xml
+    owner: midpoint
+    group: midpoint
+    mode: 0640
+  when: is_first_run
+
+- name: start midPoint service after db setup
+  systemd:
+    name: midpoint
+    state: started
