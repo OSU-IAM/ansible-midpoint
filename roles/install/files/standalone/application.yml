@@ -1,0 +1,5 @@
+server.address: 127.0.0.1
+server.port: 8080
+server.session.timeout: 60
+server.use-forward-headers: true
+server.tomcat.internal-proxies: 127.0.0.1

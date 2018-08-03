@@ -1,0 +1,31 @@
+# Configuration of virtualhosts
+
+<VirtualHost *:80>
+	ServerName {{ midpoint.midpoint_cname }}
+	ServerAlias {{ inventory_hostname }}
+
+	RewriteEngine on
+	RewriteRule ^/ https://{{ midpoint.midpoint_cname }}/
+
+</VirtualHost>
+
+
+<VirtualHost *:443>
+	ServerName {{ midpoint.midpoint_cname }}
+	ServerAlias {{ inventory_hostname }}
+
+	SSLEngine on
+
+	RewriteEngine on
+	RewriteRule ^/$ /midpoint/ [R,L]
+	RewriteRule ^/midpoint$ /midpoint/ [R,L]
+
+	ProxyPreserveHost on
+	RequestHeader set X-Forwarded-Proto https
+	RequestHeader set X-Forwarded-Port 443
+	ProxyPass "/midpoint/" "http://localhost:8080/midpoint/"
+	ProxyPassReverse "/midpoint/" "http://localhost:8080/midpoint/"
+	# midPoint can be slow to respond, so we set the timeout to 10 minutes
+	ProxyTimeout 600
+
+</VirtualHost>
