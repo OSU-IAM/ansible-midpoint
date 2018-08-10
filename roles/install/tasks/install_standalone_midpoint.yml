@@ -66,6 +66,9 @@
   become: yes
   become_user: midpoint
   when: is_first_run
+  tags:
+    # disable ansible-lint check for this task because it's too strict about shell commands
+    - skip_ansible_lint
 
 - name: wait for port 8080 to come up
   wait_for:
@@ -84,6 +87,9 @@
   become: yes
   become_user: midpoint
   when: is_first_run
+  tags:
+    # disable ansible-lint check for this task because it's too strict about shell commands
+    - skip_ansible_lint
 
 - name: create systemd unit file for midPoint
   template:

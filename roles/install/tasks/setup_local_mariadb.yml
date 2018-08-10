@@ -55,6 +55,9 @@
   command: mysql -e 'use {{ midpoint.mariadb.db_name }}'
   register: db_check
   ignore_errors: yes
+  tags:
+    # disable ansible-lint check because it thinks that this command isn't doing anything when it actually is
+    - skip_ansible_lint
 
 - name: set 'create_db' flag to false
   set_fact:
