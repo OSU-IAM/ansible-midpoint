@@ -2,13 +2,9 @@
 midpoint:
   standalone_install: true
   midpoint_cname: changeme
-  warfile:
-    ssl_cert_filename: yourcert.crt
-    ssl_certkey_filename: yourcert.key
-    ssl_intermediate_cert_filename: interm.crt
   mariadb:
     use_local_db: true
-    db_create_script_url: https://raw.githubusercontent.com/Evolveum/midpoint/v3.7.2/config/sql/_all/mysql-3.7-all.sql
+    db_create_script_url: https://raw.githubusercontent.com/Evolveum/midpoint/v3.8/config/sql/_all/mysql-3.8-all-utf8mb4.sql
     db_host: changeme
     db_port: 3306
     db_name: changeme

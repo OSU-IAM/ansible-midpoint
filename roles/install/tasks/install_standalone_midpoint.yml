@@ -11,16 +11,16 @@
 
 - name: install midPoint
   unarchive:
-    src: https://evolveum.com/downloads/midpoint/3.7.2/midpoint-3.7.2-dist.tar.gz
+    src: https://evolveum.com/downloads/midpoint/3.8/midpoint-3.8-dist.tar.gz
     dest: /opt/
     remote_src: yes
     owner: midpoint
     group: midpoint
-    creates: /opt/midpoint-3.7.2/bin/start.sh
+    creates: /opt/midpoint-3.8/bin/start.sh
 
 - name: make midpoint owner of midPoint home
   file:
-    dest: /opt/midpoint-3.7.2
+    dest: /opt/midpoint-3.8
     state: directory
     owner: midpoint
     group: midpoint
@@ -29,7 +29,7 @@
 - name: create /opt/midpoint symlink
   file:
     name: /opt/midpoint
-    src: /opt/midpoint-3.7.2
+    src: /opt/midpoint-3.8
     state: link
 
 - name: set 'is_first_run' flag to default value
