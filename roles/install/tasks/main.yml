@@ -22,3 +22,6 @@
   when: midpoint.mariadb is defined and midpoint.mariadb.use_local_db
 - include_tasks: use_external_mariadb.yml
   when: midpoint.mariadb is defined and not midpoint.mariadb.use_local_db
+
+# post-install tasks
+- import_tasks: post_install.yml

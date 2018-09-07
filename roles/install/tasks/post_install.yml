@@ -1,0 +1,29 @@
+---
+- name: create log archive dir
+  file:
+    dest: "{{ midpoint.log_archive_dir }}"
+    state: directory
+    owner: midpoint
+    group: midpoint
+
+- name: create scripts dir
+  file:
+    dest: /private/admin
+    state: directory
+    owner: root
+    group: root
+
+- name: copy log archive script
+  template:
+    src: archive-midpoint-logs.sh.j2
+    dest: /private/admin/archive-midpoint-logs.sh
+    owner: root
+    group: root
+    mode: 0700
+
+- name: create log archive cronjob
+  cron:
+    name: "archive midpoint logs"
+    minute: "0"
+    hour: "3"
+    job: "/private/admin/archive-midpoint-logs.sh"

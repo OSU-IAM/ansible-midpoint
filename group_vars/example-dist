@@ -2,6 +2,7 @@
 midpoint:
   standalone_install: true
   midpoint_cname: changeme
+  log_archive_dir: /private/archive
   mariadb:
     use_local_db: true
     db_create_script_url: https://raw.githubusercontent.com/Evolveum/midpoint/v3.8/config/sql/_all/mysql-3.8-all-utf8mb4.sql

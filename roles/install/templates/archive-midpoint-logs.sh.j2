@@ -1,0 +1,11 @@
+#!/bin/bash
+
+logdir=/opt/midpoint/var/log/
+archivedir={{ midpoint.log_archive_dir }}
+
+for log in $( find ${logdir} -type f -mtime +3 \( -name audit\*.log -o \( -name midpoint\*.log -a \! -name midpoint-profile\*.log \) \) ); do
+	if gzip ${log}; then
+		mv ${log}.gz ${archivedir}
+	fi
+done;
+
