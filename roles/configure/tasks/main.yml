@@ -1,0 +1,7 @@
+---
+- include_tasks: java_redhat.yml
+  when: ansible_os_family == 'RedHat'
+- import_tasks: midpoint.yml
+- include_tasks: apache_redhat.yml
+  when: ansible_os_family == 'RedHat'
+- import_tasks: log_archiving.yml

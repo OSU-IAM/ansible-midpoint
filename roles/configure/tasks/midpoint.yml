@@ -1,0 +1,12 @@
+---
+- name: configure application.yml
+  copy:
+    src: ../../common_files/application.yml
+    dest: /opt/midpoint/var/application.yml
+    owner: midpoint
+    group: midpoint
+
+- name: configure systemd unit file for midPoint
+  template:
+    src: ../../common_templates/midpoint.service.j2
+    dest: /etc/systemd/system/midpoint.service

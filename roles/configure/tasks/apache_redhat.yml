@@ -21,13 +21,10 @@
   template:
     src: ../../common_templates/vhosts.conf.j2
     dest: /etc/httpd/conf.d/vhosts.conf
+  notify: restart apache redhat
 
 - name: copy over ssl.conf from template
   template:
     src: ../../common_templates/ssl.conf.j2
     dest: /etc/httpd/conf.d/ssl.conf
-
-- name: (re)start apache service
-  systemd:
-    name: httpd
-    state: restarted
+  notify: restart apache redhat

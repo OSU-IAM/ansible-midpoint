@@ -37,6 +37,7 @@ Modify the values to fit your deployment.
 
 * `midpoint.standalone_install` is required, which must be `true` or `false`
 * `midpoint.midpoint_cname` is the hostname that will be used to access the midPoint application
+* `midpoint.log_archive_dir` is the path where archived midPoint log files should be stored
 
 ### Optional Parameters
 
@@ -76,3 +77,11 @@ To install midPoint:
 ```
 $ ansible-playbook -i inventory/dev install.yml
 ```
+
+To update midPoint configuration:
+
+```
+$ ansible-playbook -i inventory/dev configure.yml
+```
+
+**NOTE:** The configure role does not restart the midPoint application, but it will restart Apache if Apache-related configuration files are changed.

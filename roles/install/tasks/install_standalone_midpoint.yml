@@ -56,7 +56,7 @@
 
 - name: configure application.yml
   copy:
-    src: standalone/application.yml
+    src: ../../common_files/application.yml
     dest: /opt/midpoint/var/application.yml
     owner: midpoint
     group: midpoint
@@ -93,7 +93,7 @@
 
 - name: create systemd unit file for midPoint
   template:
-    src: standalone/midpoint.service.j2
+    src: ../../common_templates/midpoint.service.j2
     dest: /etc/systemd/system/midpoint.service
 
 - name: start midpoint service
