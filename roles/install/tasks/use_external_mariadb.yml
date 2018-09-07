@@ -17,9 +17,9 @@
     name: MariaDB-client
     state: present
 
-- name: copy over midPoint config.xml from template (standalone)
+- name: copy over midPoint config.xml from template
   template:
-    src: standalone/midpoint-config.xml.j2
+    src: midpoint-config.xml.j2
     dest: /opt/midpoint/var/config.xml
     owner: midpoint
     group: midpoint

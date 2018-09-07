@@ -1,5 +1,0 @@
-# redirect http requests to SSL
-<VirtualHost *:80>
-    ServerName {{ inventory_hostname }}
-    Redirect / https://{{ inventory_hostname }}/
-</VirtualHost>

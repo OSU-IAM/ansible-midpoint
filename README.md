@@ -2,7 +2,7 @@
 
 An ansible playbook for midPoint Identity and Access Management
 
-Starting with midPoint 3.7+, standalone deployment via Spring Boot and embedded Tomcat is the preferred method of deployment. The warfile method of deployment is deprecated and will not be supported going forward. See the **Configuration** section for details.
+Starting with midPoint 3.7+, standalone deployment via Spring Boot and embedded Tomcat is the preferred method of deployment. The warfile method of deployment is no longer supported. See the **Configuration** section for details.
 
 As of midPoint 3.7.2, this playbook will always use SSL.
 
@@ -18,7 +18,6 @@ Create a variable file in `group_vars/`. An example file can be found at `group_
 ```
 ---
 midpoint:
-  standalone_install: true
   midpoint_cname: changeme
   log_archive_dir: /private/archive
   mariadb:
@@ -35,7 +34,6 @@ Modify the values to fit your deployment.
 
 ### Required Parameters
 
-* `midpoint.standalone_install` is required, which must be `true` or `false`
 * `midpoint.midpoint_cname` is the hostname that will be used to access the midPoint application
 * `midpoint.log_archive_dir` is the path where archived midPoint log files should be stored
 
@@ -47,19 +45,13 @@ Modify the values to fit your deployment.
 
 As of midpoint 3.7.2, this playbook will always enable SSL. This is accomplished by fronting the midPoint application with Apache.
 
-To configure SSL on a standalone deployment:
+The following steps must be performed before running the `install` role in this playbook:
 1. Generate an SSL certificate for the hostname in `midpoint.midpoint_cname`
 1. Copy the certificate file and any intermediate certificates to `/etc/pki/tls/certs/`
    * The certificate file name must be `{{ midpoint.midpoint_cname }}.pem`
    * The intermediate file name must be `incommon-sha2-intermediates.pem`
 1. Copy the certificate key to `/etc/pki/tls/private/`
    * The private key file name must be `{{ midpoint.midpoint_cname }}.key`
-
-**Note:** Warfile deployments are deprecated and will no longer be supported.  
-For a warfile deployment with SSL, set `midpoint.use_ssl` to `true` and provide the filenames for the following cert files:
-  * `midpoint.warfile.ssl_cert_filename` (required)
-  * `midpoint.warfile.ssl_certkey_filename` (required)
-  * `midpoint.warfile.ssl_intermediate_cert_filename` (optional)
 
 ### Inventory
 
@@ -84,4 +76,4 @@ To update midPoint configuration:
 $ ansible-playbook -i inventory/dev configure.yml
 ```
 
-**NOTE:** The configure role does not restart the midPoint application, but it will restart Apache if Apache-related configuration files are changed.
+**NOTE:** The `configure` role does not restart the midPoint application, but it will restart Apache if Apache-related configuration files are changed.
