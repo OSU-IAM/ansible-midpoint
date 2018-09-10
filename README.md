@@ -39,7 +39,11 @@ Modify the values to fit your deployment.
 
 ### Optional Parameters
 
-* Only MariaDB is supported. To use the default H2 database, omit the `mariadb:` section.
+* MariaDB is supported locally and externally. To use the default H2 database, omit the `mariadb:` section.
+
+### midPoint Configuration Files
+
+The `common_files/` and `common_templates/` directories contain midPoint-specific configuration files.
 
 ### SSL
 
