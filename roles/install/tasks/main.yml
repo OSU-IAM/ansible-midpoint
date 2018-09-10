@@ -3,19 +3,12 @@
 - include_tasks: install_java_redhat.yml
   when: ansible_os_family == 'RedHat'
 
-# install as standalone
-- include_tasks: install_standalone_midpoint.yml
-  when: midpoint.standalone_install
-- include_tasks: install_standalone_apache_redhat.yml
-  when: midpoint.standalone_install and ansible_os_family == 'RedHat'
+# install standalone midPoint
+- import_tasks: install_standalone_midpoint.yml
 
-# install as application warfile
-# - import_tasks: install_tomcat_redhat.yml
-#   when: not midpoint.standalone_install and ansible_os_family == 'RedHat'
-# - import_tasks: install_warfile_midpoint.yml
-#   when: not midpoint.standalone_install
-# - import_tasks: install_warfile_apache_redhat.yml
-#   when: not midpoint.standalone_install and midpoint.use_ssl and ansible_os_family == 'RedHat'
+# install Apache
+- include_tasks: install_standalone_apache_redhat.yml
+  when: ansible_os_family == 'RedHat'
 
 # setup mariadb database
 - include_tasks: setup_local_mariadb.yml

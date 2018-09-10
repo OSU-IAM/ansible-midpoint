@@ -1,6 +1,5 @@
 ---
 midpoint:
-  standalone_install: true
   midpoint_cname: changeme
   log_archive_dir: /private/archive
   mariadb:
