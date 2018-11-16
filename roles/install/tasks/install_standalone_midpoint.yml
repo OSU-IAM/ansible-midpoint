@@ -9,6 +9,13 @@
     name: midpoint
     group: midpoint
 
+- name: create ansible remote_tmp dir
+  file:
+    dest: $HOME/.ansible/tmp
+    state: directory
+    owner: midpoint
+    group: midpoint
+
 - name: install midPoint
   unarchive:
     src: https://evolveum.com/downloads/midpoint/3.8/midpoint-3.8-dist.tar.gz
